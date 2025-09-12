@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/lru_demo.dir/link.d CMakeFiles/lru_demo.dir/src/main.cpp.o -o lru_demo  liblru_cache.a
