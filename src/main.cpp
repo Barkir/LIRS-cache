@@ -40,11 +40,11 @@ int main() {
     std::string result = buffer.str();
     size_t hits_count = std::count(result.begin(), result.end(), '\n');
     if (hits_count == testing.hits) {
-        std::cout << testing.test_name << " PASSED! (" << testing.hits << " hits)" "\n";
+        std::cout << testing.test_name << " PASSED! (" << hits_count << " hits)" "\n";
         return 0;
     } else {
-        std::cout << testing.test_name << " FAILED!" << "\n";
-        return 0;
+        std::cout << testing.test_name << " FAILED! (" << hits_count <<" instead " << testing.hits << "hits)" << "\n";
+        return -1;
     }
 
 }

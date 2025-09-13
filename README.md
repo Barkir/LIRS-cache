@@ -1,28 +1,50 @@
-- there is a simple implementation of a page here
+## Caches
 
-```cpp
-struct page {
-    int index;  // page index
-    int sz;     // page size
-    char *data; // page data
-}
-
-void slow_get_page(int index, struct page *p);
-```
-
-- solution to boost it - cache
-
-we want to save the pages we actually want to save (the ones we use more frequently)
-
-for example we have a place for 4 pages and we have such requests
+1. clone this repository
 
 ```
-1, 2, 3, 4, 1, 2, ...
+git clone https://github.com/Barkir/VladimirovTasks
+```
+2. create build directory
+
+```
+mkdir build
 ```
 
-_what's the best strategy to choose for caching???_
+3. run cmake from build dir
 
-## LRU (Least Recently Used)
-- if the element is found, it moves to the head
-- if not - it moves
+```
+cd build
+cmake ..
+```
+
+4. compile from build dir
+```
+cmake --build .
+```
+
+## How to test?
+Write your tests in `tests` directory in this fmt
+
+```
+1 : TEST_NAME (no spaces!!!)
+2 : cache_size
+3 : number of page calls
+4 : call seqeunce
+5 : number of hits you wait for
+```
+
+Then make `run_tests.sh` executable
+```
+chmod +x run_tests.sh
+```
+
+and run it
+
+```
+./run_tests.sh
+```
+
+
+
 
