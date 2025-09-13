@@ -89,6 +89,7 @@ CMakeFiles/lru_demo.dir/src/main.cpp.o: /home/kirill/Vlados/Cache/src/main.cpp \
   /usr/include/c++/15/bits/cpp_type_traits.h \
   /usr/include/c++/15/bits/cxxabi_forced.h \
   /usr/include/c++/15/bits/cxxabi_init_exception.h \
+  /usr/include/c++/15/bits/deque.tcc \
   /usr/include/c++/15/bits/enable_special_members.h \
   /usr/include/c++/15/bits/erase_if.h \
   /usr/include/c++/15/bits/exception.h \
@@ -130,13 +131,19 @@ CMakeFiles/lru_demo.dir/src/main.cpp.o: /home/kirill/Vlados/Cache/src/main.cpp \
   /usr/include/c++/15/bits/requires_hosted.h \
   /usr/include/c++/15/bits/std_abs.h \
   /usr/include/c++/15/bits/stl_algobase.h \
+  /usr/include/c++/15/bits/stl_bvector.h \
   /usr/include/c++/15/bits/stl_construct.h \
+  /usr/include/c++/15/bits/stl_deque.h \
   /usr/include/c++/15/bits/stl_function.h \
+  /usr/include/c++/15/bits/stl_heap.h \
   /usr/include/c++/15/bits/stl_iterator.h \
   /usr/include/c++/15/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/15/bits/stl_iterator_base_types.h \
   /usr/include/c++/15/bits/stl_list.h \
   /usr/include/c++/15/bits/stl_pair.h \
+  /usr/include/c++/15/bits/stl_queue.h \
+  /usr/include/c++/15/bits/stl_uninitialized.h \
+  /usr/include/c++/15/bits/stl_vector.h \
   /usr/include/c++/15/bits/streambuf.tcc \
   /usr/include/c++/15/bits/streambuf_iterator.h \
   /usr/include/c++/15/bits/string_view.tcc \
@@ -145,6 +152,7 @@ CMakeFiles/lru_demo.dir/src/main.cpp.o: /home/kirill/Vlados/Cache/src/main.cpp \
   /usr/include/c++/15/bits/uses_allocator.h \
   /usr/include/c++/15/bits/uses_allocator_args.h \
   /usr/include/c++/15/bits/utility.h \
+  /usr/include/c++/15/bits/vector.tcc \
   /usr/include/c++/15/bits/version.h \
   /usr/include/c++/15/cctype \
   /usr/include/c++/15/cerrno \
@@ -158,6 +166,7 @@ CMakeFiles/lru_demo.dir/src/main.cpp.o: /home/kirill/Vlados/Cache/src/main.cpp \
   /usr/include/c++/15/cwctype \
   /usr/include/c++/15/debug/assertions.h \
   /usr/include/c++/15/debug/debug.h \
+  /usr/include/c++/15/deque \
   /usr/include/c++/15/exception \
   /usr/include/c++/15/ext/aligned_buffer.h \
   /usr/include/c++/15/ext/alloc_traits.h \
@@ -175,6 +184,7 @@ CMakeFiles/lru_demo.dir/src/main.cpp.o: /home/kirill/Vlados/Cache/src/main.cpp \
   /usr/include/c++/15/numbers \
   /usr/include/c++/15/ostream \
   /usr/include/c++/15/pstl/pstl_config.h \
+  /usr/include/c++/15/queue \
   /usr/include/c++/15/stdexcept \
   /usr/include/c++/15/streambuf \
   /usr/include/c++/15/string \
@@ -184,6 +194,7 @@ CMakeFiles/lru_demo.dir/src/main.cpp.o: /home/kirill/Vlados/Cache/src/main.cpp \
   /usr/include/c++/15/type_traits \
   /usr/include/c++/15/typeinfo \
   /usr/include/c++/15/unordered_map \
+  /usr/include/c++/15/vector \
   /usr/include/c++/15/x86_64-redhat-linux/bits/atomic_word.h \
   /usr/include/c++/15/x86_64-redhat-linux/bits/c++allocator.h \
   /usr/include/c++/15/x86_64-redhat-linux/bits/c++config.h \
@@ -239,23 +250,14 @@ lru_demo: /lib64/ld-linux-x86-64.so.2 \
   /usr/lib/gcc/x86_64-redhat-linux/15/libgcc_s.so \
   /usr/lib/gcc/x86_64-redhat-linux/15/libstdc++.so \
   /usr/lib64/libc_nonshared.a \
-  CMakeFiles/lru_demo.dir/src/main.cpp.o \
-  liblru_cache.a
+  CMakeFiles/lru_demo.dir/src/main.cpp.o
 
-
-/usr/lib64/libc_nonshared.a:
 
 /usr/lib/gcc/x86_64-redhat-linux/15/libgcc_s.so:
 
 /usr/lib/gcc/x86_64-redhat-linux/15/libgcc.a:
 
-CMakeFiles/lru_demo.dir/src/main.cpp.o:
-
-/usr/lib/gcc/x86_64-redhat-linux/15/crtend.o:
-
 /usr/lib64/crtn.o:
-
-/usr/lib64/crti.o:
 
 /lib64/libgcc_s.so.1:
 
@@ -339,9 +341,13 @@ CMakeFiles/lru_demo.dir/src/main.cpp.o:
 
 /usr/include/c++/15/exception:
 
-/usr/include/c++/15/debug/debug.h:
+CMakeFiles/lru_demo.dir/src/main.cpp.o:
 
-/usr/include/c++/15/cwctype:
+/usr/lib/gcc/x86_64-redhat-linux/15/crtend.o:
+
+/usr/include/c++/15/deque:
+
+/usr/include/c++/15/debug/debug.h:
 
 /usr/include/c++/15/cstdio:
 
@@ -357,21 +363,41 @@ CMakeFiles/lru_demo.dir/src/main.cpp.o:
 
 /usr/include/c++/15/bits/string_view.tcc:
 
+/usr/include/c++/15/cwctype:
+
+/usr/include/c++/15/bits/stl_vector.h:
+
+/usr/lib64/crti.o:
+
+/usr/include/c++/15/bits/stl_queue.h:
+
 /usr/include/c++/15/cctype:
 
 /usr/include/c++/15/bits/stl_pair.h:
 
 /usr/include/c++/15/bits/stl_list.h:
 
+/usr/include/c++/15/queue:
+
 /usr/include/c++/15/bits/stl_iterator_base_types.h:
 
-/usr/include/c++/15/bits/stl_iterator.h:
+/usr/include/c++/15/bits/stl_heap.h:
 
 /usr/include/c++/15/cwchar:
 
 /usr/include/c++/15/bits/stl_function.h:
 
+/usr/lib64/libc_nonshared.a:
+
+/usr/include/c++/15/bits/stl_deque.h:
+
 /usr/include/c++/15/bits/stl_construct.h:
+
+/usr/include/c++/15/vector:
+
+/usr/include/c++/15/bits/stl_iterator.h:
+
+/usr/include/c++/15/bits/stl_bvector.h:
 
 /usr/lib64/libm.so:
 
@@ -429,6 +455,8 @@ CMakeFiles/lru_demo.dir/src/main.cpp.o:
 
 /usr/include/bits/types/struct___jmp_buf_tag.h:
 
+/usr/include/c++/15/bits/vector.tcc:
+
 /usr/include/c++/15/bits/allocated_ptr.h:
 
 /usr/include/bits/types/__fpos64_t.h:
@@ -482,8 +510,6 @@ CMakeFiles/lru_demo.dir/src/main.cpp.o:
 /usr/include/c++/15/iostream:
 
 /usr/include/bits/pthread_stack_min-dynamic.h:
-
-liblru_cache.a:
 
 /usr/include/alloca.h:
 
@@ -560,6 +586,8 @@ liblru_cache.a:
 /usr/include/bits/errno.h:
 
 /usr/include/c++/15/bits/ptr_traits.h:
+
+/usr/include/c++/15/bits/stl_uninitialized.h:
 
 /usr/include/bits/types/mbstate_t.h:
 
@@ -648,6 +676,8 @@ liblru_cache.a:
 /usr/include/c++/15/bits/charconv.h:
 
 /usr/include/c++/15/bits/cxxabi_forced.h:
+
+/usr/include/c++/15/bits/deque.tcc:
 
 /usr/include/c++/15/initializer_list:
 

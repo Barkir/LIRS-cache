@@ -96,7 +96,6 @@ lru_demo_EXTERNAL_OBJECTS =
 lru_demo: CMakeFiles/lru_demo.dir/src/main.cpp.o
 lru_demo: CMakeFiles/lru_demo.dir/build.make
 lru_demo: CMakeFiles/lru_demo.dir/compiler_depend.ts
-lru_demo: liblru_cache.a
 lru_demo: CMakeFiles/lru_demo.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/kirill/Vlados/Cache/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable lru_demo"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/lru_demo.dir/link.txt --verbose=$(VERBOSE)

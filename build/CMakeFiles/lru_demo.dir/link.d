@@ -3,7 +3,6 @@ lru_demo: \
   /usr/lib/gcc/x86_64-redhat-linux/15/../../../../lib64/crti.o \
   /usr/lib/gcc/x86_64-redhat-linux/15/crtbegin.o \
   CMakeFiles/lru_demo.dir/src/main.cpp.o \
-  liblru_cache.a \
   /usr/lib/gcc/x86_64-redhat-linux/15/libstdc++.so \
   /usr/lib/gcc/x86_64-redhat-linux/15/../../../../lib64/libm.so \
   /usr/lib/gcc/x86_64-redhat-linux/15/../../../../lib64/libm.so \
@@ -39,8 +38,6 @@ lru_demo: \
 /usr/lib/gcc/x86_64-redhat-linux/15/crtbegin.o:
 
 CMakeFiles/lru_demo.dir/src/main.cpp.o:
-
-liblru_cache.a:
 
 /usr/lib/gcc/x86_64-redhat-linux/15/libstdc++.so:
 

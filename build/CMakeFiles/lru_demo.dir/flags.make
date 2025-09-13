@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/kirill/Vlados/Cache/include
 
-CXX_FLAGS = -std=gnu++20
+CXX_FLAGS = -std=gnu++20 -Wall -Wextra -Wpedantic
 

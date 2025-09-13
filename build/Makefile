@@ -117,19 +117,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named lru_cache
-
-# Build rule for target.
-lru_cache: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 lru_cache
-.PHONY : lru_cache
-
-# fast build rule for target.
-lru_cache/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lru_cache.dir/build.make CMakeFiles/lru_cache.dir/build
-.PHONY : lru_cache/fast
-
-#=============================================================================
 # Target rules for targets named lru_demo
 
 # Build rule for target.
@@ -141,30 +128,6 @@ lru_demo: cmake_check_build_system
 lru_demo/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/lru_demo.dir/build.make CMakeFiles/lru_demo.dir/build
 .PHONY : lru_demo/fast
-
-src/cache.o: src/cache.cpp.o
-.PHONY : src/cache.o
-
-# target to build an object file
-src/cache.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lru_cache.dir/build.make CMakeFiles/lru_cache.dir/src/cache.cpp.o
-.PHONY : src/cache.cpp.o
-
-src/cache.i: src/cache.cpp.i
-.PHONY : src/cache.i
-
-# target to preprocess a source file
-src/cache.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lru_cache.dir/build.make CMakeFiles/lru_cache.dir/src/cache.cpp.i
-.PHONY : src/cache.cpp.i
-
-src/cache.s: src/cache.cpp.s
-.PHONY : src/cache.s
-
-# target to generate assembly for a file
-src/cache.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lru_cache.dir/build.make CMakeFiles/lru_cache.dir/src/cache.cpp.s
-.PHONY : src/cache.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -198,11 +161,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... lru_cache"
 	@echo "... lru_demo"
-	@echo "... src/cache.o"
-	@echo "... src/cache.i"
-	@echo "... src/cache.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

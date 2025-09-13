@@ -149,4 +149,10 @@ CMakeFiles/lru_demo.dir/src/main.cpp.o: \
  /usr/include/c++/15/bits/erase_if.h /usr/include/c++/15/list \
  /usr/include/c++/15/bits/stl_list.h \
  /usr/include/c++/15/bits/allocated_ptr.h \
- /usr/include/c++/15/bits/list.tcc
+ /usr/include/c++/15/bits/list.tcc /usr/include/c++/15/queue \
+ /usr/include/c++/15/deque /usr/include/c++/15/bits/stl_uninitialized.h \
+ /usr/include/c++/15/bits/stl_deque.h /usr/include/c++/15/bits/deque.tcc \
+ /usr/include/c++/15/vector /usr/include/c++/15/bits/stl_vector.h \
+ /usr/include/c++/15/bits/stl_bvector.h \
+ /usr/include/c++/15/bits/vector.tcc /usr/include/c++/15/bits/stl_heap.h \
+ /usr/include/c++/15/bits/stl_queue.h

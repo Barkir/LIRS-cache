@@ -63,12 +63,10 @@ CMAKE_BINARY_DIR = /home/kirill/Vlados/Cache/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/lru_cache.dir/all
 all: CMakeFiles/lru_demo.dir/all
 .PHONY : all
 
 # The main recursive "codegen" target.
-codegen: CMakeFiles/lru_cache.dir/codegen
 codegen: CMakeFiles/lru_demo.dir/codegen
 .PHONY : codegen
 
@@ -77,55 +75,22 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/lru_cache.dir/clean
 clean: CMakeFiles/lru_demo.dir/clean
 .PHONY : clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/lru_cache.dir
-
-# All Build rule for target.
-CMakeFiles/lru_cache.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lru_cache.dir/build.make CMakeFiles/lru_cache.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lru_cache.dir/build.make CMakeFiles/lru_cache.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/kirill/Vlados/Cache/build/CMakeFiles --progress-num=1,2 "Built target lru_cache"
-.PHONY : CMakeFiles/lru_cache.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/lru_cache.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/kirill/Vlados/Cache/build/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/lru_cache.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/kirill/Vlados/Cache/build/CMakeFiles 0
-.PHONY : CMakeFiles/lru_cache.dir/rule
-
-# Convenience name for target.
-lru_cache: CMakeFiles/lru_cache.dir/rule
-.PHONY : lru_cache
-
-# codegen rule for target.
-CMakeFiles/lru_cache.dir/codegen:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lru_cache.dir/build.make CMakeFiles/lru_cache.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/kirill/Vlados/Cache/build/CMakeFiles --progress-num=1,2 "Finished codegen for target lru_cache"
-.PHONY : CMakeFiles/lru_cache.dir/codegen
-
-# clean rule for target.
-CMakeFiles/lru_cache.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/lru_cache.dir/build.make CMakeFiles/lru_cache.dir/clean
-.PHONY : CMakeFiles/lru_cache.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/lru_demo.dir
 
 # All Build rule for target.
-CMakeFiles/lru_demo.dir/all: CMakeFiles/lru_cache.dir/all
+CMakeFiles/lru_demo.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/lru_demo.dir/build.make CMakeFiles/lru_demo.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/lru_demo.dir/build.make CMakeFiles/lru_demo.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/kirill/Vlados/Cache/build/CMakeFiles --progress-num=3,4 "Built target lru_demo"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/kirill/Vlados/Cache/build/CMakeFiles --progress-num=1,2 "Built target lru_demo"
 .PHONY : CMakeFiles/lru_demo.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/lru_demo.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/kirill/Vlados/Cache/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/kirill/Vlados/Cache/build/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/lru_demo.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/kirill/Vlados/Cache/build/CMakeFiles 0
 .PHONY : CMakeFiles/lru_demo.dir/rule
@@ -137,7 +102,7 @@ lru_demo: CMakeFiles/lru_demo.dir/rule
 # codegen rule for target.
 CMakeFiles/lru_demo.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/lru_demo.dir/build.make CMakeFiles/lru_demo.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/kirill/Vlados/Cache/build/CMakeFiles --progress-num=3,4 "Finished codegen for target lru_demo"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/kirill/Vlados/Cache/build/CMakeFiles --progress-num=1,2 "Finished codegen for target lru_demo"
 .PHONY : CMakeFiles/lru_demo.dir/codegen
 
 # clean rule for target.
