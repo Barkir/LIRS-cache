@@ -2,8 +2,10 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
+
 #include "cache.hpp"
 #include "main.hpp"
+#include "lirs.hpp"
 
 struct testingInterface getTestingInfo() {
     struct testingInterface testing = {};

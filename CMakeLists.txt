@@ -8,6 +8,7 @@ add_executable(lru_demo
     src/main.cpp
     include/cache.hpp
     include/main.hpp
+    include/lirs.hpp
 )
 
 # Устанавливаем include директории
