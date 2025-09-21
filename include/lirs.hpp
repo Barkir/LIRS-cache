@@ -95,14 +95,29 @@ template<typename T, typename KeyT>
 T& LIRSCache<T, KeyT>::get(KeyT key) {
     auto it = hashMap.find(key);
     if (it != hashMap.end()) {
-        lowInterSet.splice(lowInterSet.begin(), lowInterSet, it);
-        hashMap[key] = lowInterSet.begin();
-        prune();
+        if (it->second.getLIR()) {    // LIR meet case
+            lowInterSet.splice(lowInterSet.begin(), lowInterSet, it);
+            hashMap[key] = lowInterSet.begin();
+            prune();
+        } else if (it->second.getHIR()) {
+            if isInLIR(it) {
 
-        auto new_it = lowInterSet.begin();
-        if (new_it->second.getHIR()) {
-            new_it->second.setLIR(true);
-            new_it->second.setHIR(false);
+                // erase it from HIR and swap statuses
+                highInterSet.erase(it->second);
+                it->second.setLIR(true);
+                it->second.setHIR(false);
+
+                // erase last LIR block and move it to the end of HIR, then prune
+                auto lastIt = std::prev(lowInterSet.end());
+
+                lastIt.setHIR(true);
+                lastIt.setLIR(false);
+                lowInterSet.splice(highInterSet.end(), lowInterSet, lastIt);
+                prune();
+            } else {
+                // leaving it as an hir-block and moving to the end of HIR
+                highInterSet.splice(highInterSet.end(), highInterSet, it);
+            }
         }
     }
 }
