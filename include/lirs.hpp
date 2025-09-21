@@ -3,25 +3,72 @@
 #include <stack>
 #include <queue>
 #include <list>
+#include <optional>
+#include <unordered_map>
 
 const size_t DEFAULT_LIR_CAP = 16;
 const size_t DEFAULT_HIR_CAP = 2;
+const size_t RECENCY_THRESHOLD = 128;
 
 template <typename T>
 class LIRSPage {
-    public:
+    private:
         T data;
-        size_t recency;
-        size_t irr;
+        std::optional<size_t> recency;
+        std::optional<size_t> irr;
         bool isResident;
+        bool isHIR;
+        bool isLIR;
+    public:
+        size_t getRecency() {
+            return recency;
+        }
+        void setRecency(size_t new_recency) {
+            recency = new_recency;
+        }
+
+    public:
+        size_t getIRR() {
+            return irr;
+        }
+        void setIRR(size_t new_irr) {
+            irr = new_irr;
+        }
+
+    public:
+        bool getResidency() {
+            return isResident;
+        }
+        void setResidency(bool val) {
+            isResident = val;
+        }
+
+    public:
+        bool getHIR() {
+            return isHIR;
+        }
+        void setHIR(bool val) {
+            isHIR = val;
+        }
+
+    public:
+        bool getLIR() {
+            return isLIR;
+        }
+        void setLIR(bool val) {
+            isLIR = val;
+        }
+
 };
 
-template <typename T, typename KeyT = int>
+template <typename T = LIRSPage, typename KeyT = int>
 class LIRSCache {
     private:
+        using lstIter = typename std::list<std::pair<KeyT, T>>::iterator;
         std::list<std::pair<KeyT, T>> lowInterSet;
         std::list<std::pair<KeyT, T>> highInterSet;
         std::list<std::pair<KeyT, T>> dataList;
+        std::unordered_map<KeyT, lstIter> hashMap;
         size_t capacity;
 
     public:
@@ -32,17 +79,40 @@ class LIRSCache {
 };
 
 
-// template<typename T, typename KeyT>
-// void LIRSCache<T, KeyT>::insert(KeyT key, T elem) {
-//     if ()
-// }
+template<typename T, typename KeyT>
+void LIRSCache<T, KeyT>::insert(KeyT key, T elem) {
+    std::pair<KeyT, T> toInsert(key, elem); // data to insert
+    if (lowInterSet.size() <= capacity) {
+        lowInterSet.push_front(toInsert);
+        hashMap[key] = lowInterSet.begin();
+    } else if (!T.getRecency().has_value() || (T.getRecency() >= RECENCY_THRESHOLD) {
+        T.setHIR(true);
+        T.setRecency(1);
+    }
+}
+
+template<typename T, typename KeyT>
+T& LIRSCache<T, KeyT>::get(KeyT key) {
+    auto it = hashMap.find(key);
+    if (it != hashMap.end()) {
+        lowInterSet.splice(lowInterSet.begin(), lowInterSet, it);
+        hashMap[key] = lowInterSet.begin();
+        prune();
+
+        auto new_it = lowInterSet.begin();
+        if (new_it->second.getHIR()) {
+            new_it->second.setLIR(true);
+            new_it->second.setHIR(false);
+        }
+    }
+}
 
 
-// this function finds HIR resident blocks in LIR stack until
+// this function finds HIR resident blocks in LIR stack until there is an LIR block
 template<typename T, typename KeyT>
 void LIRSCache<T, KeyT>::prune() {
     for (auto it = lowInterSet.rbegin(); it != lowInterSet.rend(); it++) {
-        if (it->isResident) {
+        if (it->second.getHIR()) {
             lowInterSet.erase(it);
         } else {
             break;
