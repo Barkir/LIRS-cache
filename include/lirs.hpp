@@ -82,15 +82,18 @@ class LIRSCache {
 template<typename T, typename KeyT>
 void LIRSCache<T, KeyT>::insert(KeyT key, T elem) {
     std::pair<KeyT, T> toInsert(key, elem); // data to insert
-    if (lowInterSet.size() <= capacity) {
+    if (lowInterSet.size() <= capacity) { // empty hash case
         lowInterSet.push_front(toInsert);
         hashMap[key] = lowInterSet.begin();
     } else if (!T.getRecency().has_value() || (T.getRecency() >= RECENCY_THRESHOLD) {
         T.setHIR(true);
+        T.setLIR(false);
         T.setRecency(1);
     }
 }
 
+
+// finished!
 template<typename T, typename KeyT>
 T& LIRSCache<T, KeyT>::get(KeyT key) {
     auto it = hashMap.find(key);
