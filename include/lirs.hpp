@@ -16,58 +16,42 @@ class LIRSPage {
         T data;
         std::optional<size_t> recency;
         std::optional<size_t> irr;
+        bool isHot;
         bool isResident;
-        bool isHIR;
-        bool isLIR;
+
+    // constructors
     public:
-        size_t getRecency() {
-            return recency;
-        }
-        void setRecency(size_t new_recency) {
-            recency = new_recency;
+        LIRSPage(const T& initialData) : data(initialData), recency(std::nullopt), irr(std::nullopt),
+            isHot(false), isResident(false) {}
+
+    // get functions
+    public:
+        bool getHot() {
+            return isHot;
         }
 
-    public:
-        size_t getIRR() {
-            return irr;
-        }
-        void setIRR(size_t new_irr) {
-            irr = new_irr;
-        }
-
-    public:
-        bool getResidency() {
+        bool getResident() {
             return isResident;
         }
-        void setResidency(bool val) {
-            isResident = val;
-        }
 
+    // set functions
     public:
-        bool getHIR() {
-            return isHIR;
-        }
-        void setHIR(bool val) {
-            isHIR = val;
+        void setHot(bool state) {
+            isHot = state;
         }
 
-    public:
-        bool getLIR() {
-            return isLIR;
+        void setResident(bool state) {
+            isResident = state;
         }
-        void setLIR(bool val) {
-            isLIR = val;
-        }
-
 };
 
-template <typename T = LIRSPage, typename KeyT = int>
+template <typename T, typename KeyT = int>
 class LIRSCache {
     private:
-        using lstIter = typename std::list<std::pair<KeyT, T>>::iterator;
-        std::list<std::pair<KeyT, T>> lowInterSet;
-        std::list<std::pair<KeyT, T>> highInterSet;
-        std::list<std::pair<KeyT, T>> dataList;
+        using lstIter = typename std::list<std::pair<KeyT, LIRSPage<T>>>::iterator;
+        std::list<std::pair<KeyT, LIRSPage<T>>> lowInterSet;
+        std::list<std::pair<KeyT, LIRSPage<T>>> highInterSet;
+        std::list<std::pair<KeyT, LIRSPage<T>>> dataList;
         std::unordered_map<KeyT, lstIter> hashMap;
         size_t capacity;
 
@@ -93,37 +77,52 @@ void LIRSCache<T, KeyT>::insert(KeyT key, T elem) {
 }
 
 
-// finished!
+// stack contains hot pages (always hit) and referenced cold entries (resident or not)
+// most recent recency is on top
+// entries which are less recent than the least recent hot page are removed ("stack pruning"). So the bottom page is always hot.
+
+// cold entries on the stack are undergoing a "trial period". if they are referenced soon again, they become hot.
+// otherwise they fall off the bottom of the stack.
+
+// secondary data structure is the "queue". It contains all resident cold pages (on stack or not).
+// when a hot page is removed from the stack it is added to the end of the queue.
+// when page replacement needs a page it removes it from the front of the queue.
 template<typename T, typename KeyT>
 T& LIRSCache<T, KeyT>::get(KeyT key) {
     auto it = hashMap.find(key);
-    if (it != hashMap.end()) {
-        if (it->second.getLIR()) {    // LIR meet case
-            lowInterSet.splice(lowInterSet.begin(), lowInterSet, it);
-            hashMap[key] = lowInterSet.begin();
-            prune();
-        } else if (it->second.getHIR()) {
-            if isInLIR(it) {
-
-                // erase it from HIR and swap statuses
-                highInterSet.erase(it->second);
-                it->second.setLIR(true);
-                it->second.setHIR(false);
-
-                // erase last LIR block and move it to the end of HIR, then prune
-                auto lastIt = std::prev(lowInterSet.end());
-
-                lastIt.setHIR(true);
-                lastIt.setLIR(false);
-                lowInterSet.splice(highInterSet.end(), lowInterSet, lastIt);
+    if (it != hashMap.end()) { // page can be hot or cold resident
+        if (it->second.getHot()) { // hot page case
+            if (atTheBottom(it)) { // if at the stack bottom
+                moveToTheTop(it);
+                prune()
+            } else {
+                moveToTheTop(it);
+            }
+        } else { // cold resident page case
+            if (onStack(it)) {
+                it->second.setHot(true);
+                removeFromQueue(it);
+                lowInterSet.back().second.setHot(false);
+                moveFromTo(lowInterSet.back(), highInterSet.end());
                 prune();
             } else {
-                // leaving it as an hir-block and moving to the end of HIR
-                highInterSet.splice(highInterSet.end(), highInterSet, it);
+                moveFromTo(it, highInterSet.end()) // leaving it cold and moving to the end of the queue
             }
+
+        }
+    } else { // page can be cold non-resident
+        if (onStack(it)) {
+            it->second.setHot(true);
+            lowInterSet.back().second.setHot(false);
+            moveFromTo(lowInterSet.back(), highInterSet.end());
+            prune();
+        } else {
+            moveFromTo(it, highInterSet.end());
         }
     }
+
 }
+
 
 
 // this function finds HIR resident blocks in LIR stack until there is an LIR block
