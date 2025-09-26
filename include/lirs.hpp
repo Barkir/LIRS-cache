@@ -5,6 +5,7 @@
 #include <list>
 #include <optional>
 #include <unordered_map>
+#include <iomanip>
 
 const size_t DEFAULT_LIR_CAP = 16;
 const size_t DEFAULT_HIR_CAP = 2;
@@ -26,12 +27,16 @@ class LIRSPage {
 
     // get functions
     public:
-        bool getHot() {
+        bool getHot() const {
             return isHot;
         }
 
-        bool getResident() {
+        bool getResident() const {
             return isResident;
+        }
+
+        T getData() const {
+            return data;
         }
 
     // set functions
@@ -53,29 +58,90 @@ class LIRSCache {
         std::list<std::pair<KeyT, LIRSPage<T>>> highInterSet;
         std::list<std::pair<KeyT, LIRSPage<T>>> dataList;
         std::unordered_map<KeyT, lstIter> hashMap;
-        size_t capacity;
+        size_t lir_capacity;
+        size_t hir_capacity;
+
+        bool atTheBottom(auto it) {
+            if (lowInterSet.empty())
+                return false;
+            return it == std::prev(lowInterSet.end());
+        }
+
+        bool onStack(auto it) {
+            for (auto lit = lowInterSet.begin(); lit != lowInterSet.end(); lit++) {
+                if (lit->first == it->first) {
+                    return true;
+                }
+            }
+            return false;
+        }
 
     public:
-        LIRSCache(size_t lirCap = DEFAULT_LIR_CAP, size_t hirCap = DEFAULT_HIR_CAP);
-        void insert(KeyT key, T& elem);
+        LIRSCache(size_t lirCap = DEFAULT_LIR_CAP, size_t hirCap = DEFAULT_HIR_CAP) : lir_capacity(lirCap), hir_capacity(hirCap) {};
+        void insert(KeyT key, T elem);
         T& get(KeyT key);
+        void printCache();
         void prune();
+
+    public:
+    friend std::ostream& operator<<(std::ostream& os, const LIRSCache<T, KeyT>& cache) {
+        os << "\n┌─────────────────────────────────┐" << std::endl;
+        os << "│          LIRS CACHE STATE       │" << std::endl;
+        os << "└─────────────────────────────────┘" << std::endl;
+
+        os << "Capacity: LIR=" << cache.lir_capacity
+           << ", HIR=" << cache.hir_capacity
+           << ", Used: " << cache.hashMap.size() << "/" << cache.lir_capacity << std::endl;
+
+        os << "\nLIR STACK (Hot pages, most recent first):" << std::endl;
+        os << "┌─────┬──────┬───────┬──────────┐" << std::endl;
+        os << "│ Pos │ Key  │ Value │   Type   │" << std::endl;
+        os << "├─────┼──────┼───────┼──────────┤" << std::endl;
+
+        int pos = 0;
+        for (const auto& item : cache.lowInterSet) {
+            os << "│ " << std::setw(3) << pos++ << " │ "
+               << std::setw(4) << item.first << " │ "
+               << std::setw(5) << item.second.getData() << " │ "
+               << (item.second.getHot() ? "  LIR    " : "  HIR    ") << "│" << std::endl;
+        }
+        os << "└─────┴──────┴───────┴──────────┘" << std::endl;
+
+        os << "\nHIR QUEUE (Cold residents):" << std::endl;
+        os << "┌─────┬──────┬───────┐" << std::endl;
+        os << "│ Pos │ Key  │ Value │" << std::endl;
+        os << "├─────┼──────┼───────┤" << std::endl;
+
+        pos = 0;
+        for (const auto& item : cache.highInterSet) {
+            os << "│ " << std::setw(3) << pos++ << " │ "
+               << std::setw(4) << item.first << " │ "
+               << std::setw(5) << item.second.getData() << " │" << std::endl;
+        }
+        os << "└─────┴──────┴───────┘" << std::endl;
+
+        return os;
+    }
 };
 
 
 template<typename T, typename KeyT>
 void LIRSCache<T, KeyT>::insert(KeyT key, T elem) {
-    std::pair<KeyT, T> toInsert(key, elem); // data to insert
-    if (lowInterSet.size() <= capacity) { // empty hash case
+    std::pair<KeyT, LIRSPage<T>> toInsert(key, elem); // data to insert
+    if (lowInterSet.size() <= lir_capacity) { // empty hash case
+
+        toInsert.second.setHot(true);
+        toInsert.second.setResident(true);
+
         lowInterSet.push_front(toInsert);
         hashMap[key] = lowInterSet.begin();
-    } else if (!T.getRecency().has_value() || (T.getRecency() >= RECENCY_THRESHOLD) {
-        T.setHIR(true);
-        T.setLIR(false);
-        T.setRecency(1);
+    } else if (highInterSet.size() <= hir_capacity) {
+        highInterSet.push_front(toInsert);
+    } else {
+        highInterSet.pop_back();
+        highInterSet.push_front(toInsert);
     }
 }
-
 
 // stack contains hot pages (always hit) and referenced cold entries (resident or not)
 // most recent recency is on top
@@ -93,20 +159,20 @@ T& LIRSCache<T, KeyT>::get(KeyT key) {
     if (it != hashMap.end()) { // page can be hot or cold resident
         if (it->second.getHot()) { // hot page case
             if (atTheBottom(it)) { // if at the stack bottom
-                moveToTheTop(it);
-                prune()
+                lowInterSet.splice(lowInterSet.front(), lowInterSet, it);
+                prune();
             } else {
-                moveToTheTop(it);
+                lowInterSet.splice(lowInterSet.front(), lowInterSet, it);
             }
         } else { // cold resident page case
             if (onStack(it)) {
                 it->second.setHot(true);
-                removeFromQueue(it);
+                highInterSet.erase(it);
                 lowInterSet.back().second.setHot(false);
-                moveFromTo(lowInterSet.back(), highInterSet.end());
+                lowInterSet.splice(highInterSet.end(), lowInterSet, lowInterSet.back()); // moving from lowInterSet end to highInterSet end
                 prune();
             } else {
-                moveFromTo(it, highInterSet.end()) // leaving it cold and moving to the end of the queue
+                highInterSet.splice(highInterSet.end(), highInterSet, it); // leaving it cold and moving to the end of the queue
             }
 
         }
@@ -114,13 +180,12 @@ T& LIRSCache<T, KeyT>::get(KeyT key) {
         if (onStack(it)) {
             it->second.setHot(true);
             lowInterSet.back().second.setHot(false);
-            moveFromTo(lowInterSet.back(), highInterSet.end());
+            highInterSet.splice(highInterSet.end(), lowInterSet, lowInterSet.end());
             prune();
         } else {
-            moveFromTo(it, highInterSet.end());
+            highInterSet.splice(highInterSet.end(), lowInterSet, it);
         }
     }
-
 }
 
 

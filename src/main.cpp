@@ -25,7 +25,13 @@ struct testingInterface getTestingInfo() {
 }
 
 int main() {
+    LIRSCache<int> lirs;
+    std::cout << lirs << "\n";
 
+
+// =============================================================
+//     Testing infrastructure for LRU cache (./run_tests.sh)
+// =============================================================
     struct testingInterface testing = getTestingInfo();
     std::ostringstream buffer;
     std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
@@ -37,7 +43,6 @@ int main() {
             test_cache.insert(key, key * 100);
         }
     }
-
     std::cout.rdbuf(old);
     std::string result = buffer.str();
     size_t hits_count = std::count(result.begin(), result.end(), '\n');
