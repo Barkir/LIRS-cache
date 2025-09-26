@@ -45,6 +45,15 @@ and run it
 ./run_tests.sh
 ```
 
+## References
+[MySQL LIRS implementation source code](https://www.iskm.org/mysql56/pgman_8hpp_source.html)
+
+[LIRS wiki](https://en.wikipedia.org/wiki/LIRS_caching_algorithm)
+
+[LIRS article](https://ranger.uta.edu/~sjiang/pubs/papers/jiang02_LIRS.pdf)
+
+[my attempts to figure out what's going on :| ](./lirs_tryhard.md)
+
 
 
 
