@@ -26,9 +26,10 @@ struct testingInterface getTestingInfo() {
 
 int main() {
     LIRSCache<int> lirs;
-    std::cout << lirs << "\n";
+    // std::cout << lirs << "\n";
 
 
+#
 // =============================================================
 //     Testing infrastructure for LRU cache (./run_tests.sh)
 // =============================================================

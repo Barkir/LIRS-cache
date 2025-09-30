@@ -30,6 +30,7 @@ class WhateverCache {
         void printNElem(size_t n);
         void insert(KeyT key, T elem);
         T* get(KeyT key);
+        T* slow_get_page(KeyT key);
 };
 
 
@@ -103,6 +104,11 @@ T* WhateverCache<T, KeyT>::get(KeyT key) {
     }
 
     ON_DEBUG(std::cout << "page not found in hash, finding it slowly..." << "\n");
+    return slow_get_page(key);
+}
+
+template<typename T, typename KeyT>
+T* WhateverCache<T, KeyT>::slow_get_page(KeyT key) {
     for (auto it = dataList.begin(); it != dataList.end(); it++) {
         if (it->first == key) {
             ON_DEBUG(std::cout << "found page in list!" << "\n");
