@@ -58,11 +58,11 @@ The LIRS cache will have two `get` functions - one is for regular use and one is
 
 ```cpp
 T& get(int key) {
-    return getImpl(key, true);
+    return getFunc(key, true);
 }
 
 T& getWithStats(int key) {
-    return getImpl(key, false)
+    return getFunc(key, false)
 }
 ```
 

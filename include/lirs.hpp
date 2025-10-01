@@ -61,6 +61,8 @@ class LIRSCache {
         size_t lir_capacity;
         size_t hir_capacity;
 
+        CacheStats stats;
+
         bool atTheBottom(auto it) {
             if (lowInterSet.empty())
                 return false;
@@ -79,7 +81,12 @@ class LIRSCache {
     public:
         LIRSCache(size_t lirCap = DEFAULT_LIR_CAP, size_t hirCap = DEFAULT_HIR_CAP) : lir_capacity(lirCap), hir_capacity(hirCap) {};
         void insert(KeyT key, T elem);
+
+        T& getFunc(KeyT key, bool state);
+
         T& get(KeyT key);
+        T& getWithStats(KeyT key);
+
         void printCache();
         void prune();
 
@@ -143,6 +150,16 @@ void LIRSCache<T, KeyT>::insert(KeyT key, T elem) {
     }
 }
 
+template<typename T, typename KeyT>
+T& LIRSCache<T, KeyT>::get(KeyT, bool testState){
+    return getFunc(key, false);
+}
+
+template<typename T, typename KeyT>
+T& LIRSCache<T, KeyT>::getWithStats(KeyT, bool testState){
+    return getFunc(key, true);
+}
+
 // stack contains hot pages (always hit) and referenced cold entries (resident or not)
 // most recent recency is on top
 // entries which are less recent than the least recent hot page are removed ("stack pruning"). So the bottom page is always hot.
@@ -154,15 +171,17 @@ void LIRSCache<T, KeyT>::insert(KeyT key, T elem) {
 // when a hot page is removed from the stack it is added to the end of the queue.
 // when page replacement needs a page it removes it from the front of the queue.
 template<typename T, typename KeyT>
-T& LIRSCache<T, KeyT>::get(KeyT key) {
+T& LIRSCache<T, KeyT>::getFunc(KeyT key, bool testState) {
     auto it = hashMap.find(key);
     if (it != hashMap.end()) { // page can be hot or cold resident
         if (it->second.getHot()) { // hot page case
             if (atTheBottom(it)) { // if at the stack bottom
                 lowInterSet.splice(lowInterSet.front(), lowInterSet, it);
                 prune();
+                if (testState) stats.recordHit();
             } else {
                 lowInterSet.splice(lowInterSet.front(), lowInterSet, it);
+                if (testState) stats.recordHit();
             }
         } else { // cold resident page case
             if (onStack(it)) {
@@ -171,8 +190,12 @@ T& LIRSCache<T, KeyT>::get(KeyT key) {
                 lowInterSet.back().second.setHot(false);
                 lowInterSet.splice(highInterSet.end(), lowInterSet, lowInterSet.back()); // moving from lowInterSet end to highInterSet end
                 prune();
+
+                if (testState) stats.recordMiss()
+
             } else {
                 highInterSet.splice(highInterSet.end(), highInterSet, it); // leaving it cold and moving to the end of the queue
+                if (testState) stats.recordMiss()
             }
 
         }
@@ -182,8 +205,10 @@ T& LIRSCache<T, KeyT>::get(KeyT key) {
             lowInterSet.back().second.setHot(false);
             highInterSet.splice(highInterSet.end(), lowInterSet, lowInterSet.end());
             prune();
+            if (testState) stats.recordMiss()
         } else {
             highInterSet.splice(highInterSet.end(), lowInterSet, it);
+            if (testState) stats.recordMiss()
         }
     }
 }
@@ -199,5 +224,36 @@ void LIRSCache<T, KeyT>::prune() {
         } else {
             break;
         }
+    }
+}
+
+class CacheStats {
+    private:
+        size_t hits = 0;
+        size_t misses = 0;
+
+    // record functions
+    public:
+        void recordHit() {
+            hits++;
+        }
+        void recordMiss() {
+            misses++;
+        }
+
+    // get functions
+    public:
+        size_t getHits() {
+            return hits;
+        }
+
+        size_t getMisses() {
+            return misses;
+        }
+
+    // analyzing
+    public:
+        double getHitRate() const {
+        return (hits + misses) > 0 ? static_cast<double>(hits) / (hits + misses) : 0.0;
     }
 }
