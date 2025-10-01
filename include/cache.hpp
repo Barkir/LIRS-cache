@@ -48,7 +48,7 @@ void WhateverCache<T, KeyT>::printNElem(size_t n) {
             break;
         std::cout << el << " ";
     }
-    std::cout << "\n";
+    std::cout << "\n";f
 }
 
 

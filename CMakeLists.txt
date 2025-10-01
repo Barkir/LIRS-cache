@@ -4,11 +4,22 @@ project(LRUCache LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(lru_demo
+set(COMMON_HEADERS
+    inlcude/cache.hpp
+    include/lirs.hpp
+    include/main.hpp
+
+add_executable(lru
     src/main.cpp
     include/cache.hpp
     include/main.hpp
+)
+
+
+add_executable(lirs
+    src/main.cpp
     include/lirs.hpp
+    include/main.hpp
 )
 
 # Устанавливаем include директории

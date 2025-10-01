@@ -3,8 +3,8 @@
 #include <string>
 #include <algorithm>
 
-#include "cache.hpp"
 #include "main.hpp"
+#include "lirs.hpp"
 
 struct testingInterface getTestingInfo() {
     struct testingInterface testing = {};
@@ -24,6 +24,8 @@ struct testingInterface getTestingInfo() {
 }
 
 int main() {
+    LIRSCache<int> lirs;
+    // std::cout << lirs << "\n";
 
 // =============================================================
 //     Testing infrastructure for LRU cache (./run_tests.sh)

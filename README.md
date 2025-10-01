@@ -45,6 +45,27 @@ and run it
 ./run_tests.sh
 ```
 
+
+## LIRS tests implementation
+
+Testing infrastructure of *LIRS* cache will differ from *LRU*.
+There is a class called _LIRS Stats_ whhere we collect these data:
+
+- `size_t hits`
+- `size_t misses`
+
+The LIRS cache will have two `get` functions - one is for regular use and one is for testing.
+
+```cpp
+T& get(int key) {
+    return getImpl(key, true);
+}
+
+T& getWithStats(int key) {
+    return getImpl(key, false)
+}
+```
+
 ## References
 [MySQL LIRS implementation source code](https://www.iskm.org/mysql56/pgman_8hpp_source.html)
 
