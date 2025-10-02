@@ -11,6 +11,16 @@ const size_t DEFAULT_LIR_CAP = 16;
 const size_t DEFAULT_HIR_CAP = 2;
 const size_t RECENCY_THRESHOLD = 128;
 
+// #define DEBUG_MODE
+#ifdef DEBUG_MODE
+
+#define ON_DEBUG(code) code
+
+#else
+
+#define ON_DEBUG(code)
+
+#endif
 
 
 class CacheStats {
@@ -99,25 +109,35 @@ class LIRSCache {
         bool atTheBottom(auto it) {
             if (lowInterSet.empty())
                 return false;
-            return it == std::prev(lowInterSet.end());
+            return it->second == std::prev(lowInterSet.end());
         }
 
-        T* onStack(KeyT key) {
+        lstIter onStack(KeyT key) {
             for (auto lit = lowInterSet.begin(); lit != lowInterSet.end(); lit++) {
                 if (lit->first == key) {
                     return lit;
                 }
             }
+            return highInterSet.end();
+        }
+
+        lstIter onQueue(KeyT key) {
+            for (auto hit = highInterSet.begin(); hit != highInterSet.end(); hit++) {
+                if (hit->first == key) {
+                    return hit;
+                }
+            }
+            return highInterSet.end();
         }
 
     public:
         LIRSCache(size_t lirCap = DEFAULT_LIR_CAP, size_t hirCap = DEFAULT_HIR_CAP) : lir_capacity(lirCap), hir_capacity(hirCap) {};
         void insert(KeyT key, T elem);
 
-        T* getFunc(KeyT key, bool state);
+        LIRSPage<T>* getFunc(KeyT key, bool state);
 
-        T* get(KeyT key);
-        T* getWithStats(KeyT key);
+        LIRSPage<T>* get(KeyT key);
+        LIRSPage<T>* getWithStats(KeyT key);
 
         void printCache();
         void prune();
@@ -183,12 +203,12 @@ void LIRSCache<T, KeyT>::insert(KeyT key, T elem) {
 }
 
 template<typename T, typename KeyT>
-T* LIRSCache<T, KeyT>::get(KeyT key){
+LIRSPage<T>* LIRSCache<T, KeyT>::get(KeyT key){
     return getFunc(key, false);
 }
 
 template<typename T, typename KeyT>
-T* LIRSCache<T, KeyT>::getWithStats(KeyT key){
+LIRSPage<T>* LIRSCache<T, KeyT>::getWithStats(KeyT key){
     return getFunc(key, true);
 }
 
@@ -204,48 +224,49 @@ T* LIRSCache<T, KeyT>::getWithStats(KeyT key){
 // when page replacement needs a page it removes it from the front of the queue.
 
 template<typename T, typename KeyT>
-T* LIRSCache<T, KeyT>::getFunc(KeyT key, bool testState) {
+LIRSPage<T>* LIRSCache<T, KeyT>::getFunc(KeyT key, bool testState) {
     auto it = hashMap.find(key);
     if (it != hashMap.end()) { // page can be hot or cold resident
-        if ((it->second)->second.getHot()) { // hot page case
+        if (it->second->second.getHot()) { // hot page case
             if (atTheBottom(it)) { // if at the stack bottom
-                lowInterSet.splice(lowInterSet.front(), lowInterSet, it->second->second);
+                lowInterSet.splice(lowInterSet.begin(), lowInterSet, it->second);
                 prune();
                 if (testState) stats.recordHit();
-                return it;
+                return &it->second->second;
             } else {
-                lowInterSet.splice(lowInterSet.front(), lowInterSet, it->second->second);
+                lowInterSet.splice(lowInterSet.begin(), lowInterSet, it->second);
                 if (testState) stats.recordHit();
-                return it;
+                return &it->second->second;
             }
         } else { // cold resident page case
-            if (auto new_it = onStack(key)) {
-                new_it->second.setHot(true);
-                highInterSet.erase(*new_it);
+            if (auto new_it = onStack(key); new_it != highInterSet.end()) {
+                it->second->second.setHot(true);
+                highInterSet.erase(it->second);
                 lowInterSet.back().second.setHot(false);
-                lowInterSet.splice(highInterSet.end(), lowInterSet, lowInterSet.back()); // moving from lowInterSet end to highInterSet end
+                lowInterSet.splice(highInterSet.end(), lowInterSet, lowInterSet.end()); // moving from lowInterSet end to highInterSet end
                 prune();
                 if (testState) stats.recordMiss();
-                return new_it;
+                return &new_it->second;
 
             } else {
-                highInterSet.splice(highInterSet.end(), highInterSet, *new_it); // leaving it cold and moving to the end of the queue
+                highInterSet.splice(highInterSet.end(), highInterSet, it->second); // leaving it cold and moving to the end of the queue
                 if (testState) stats.recordMiss();
-                return new_it;
+                return &new_it->second;
             }
 
         }
     } else { // page can be cold non-resident
-        if (auto new_it = onStack(key)) {
-            new_it->second.setHot(true);
+        if (auto new_it = onStack(key); new_it != lowInterSet.end()) {
+            it->second->second.setHot(true);
             lowInterSet.back().second.setHot(false);
             highInterSet.splice(highInterSet.end(), lowInterSet, lowInterSet.end());
             prune();
             if (testState) stats.recordMiss();
+            return &new_it->second;
         } else {
-            highInterSet.splice(highInterSet.end(), lowInterSet, *new_it);
+            highInterSet.splice(highInterSet.end(), lowInterSet, it->second);
             if (testState) stats.recordMiss();
-            return new_it;
+            return &new_it->second;
         }
     }
 
@@ -257,8 +278,8 @@ T* LIRSCache<T, KeyT>::getFunc(KeyT key, bool testState) {
 // this function finds HIR resident blocks in LIR stack until there is an LIR block
 template<typename T, typename KeyT>
 void LIRSCache<T, KeyT>::prune() {
-    for (auto it = lowInterSet.rbegin(); it != lowInterSet.rend(); it++) {
-        if (it->second.getHIR()) {
+    for (auto it = lowInterSet.end(); it != lowInterSet.begin(); it--) {
+        if (auto smth = onQueue(it->first); smth != highInterSet.end()) {
             lowInterSet.erase(it);
         } else {
             break;
