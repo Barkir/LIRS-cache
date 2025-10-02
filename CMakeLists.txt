@@ -8,6 +8,7 @@ set(COMMON_HEADERS
     inlcude/cache.hpp
     include/lirs.hpp
     include/main.hpp
+)
 
 add_executable(lru
     src/main.cpp
@@ -17,20 +18,19 @@ add_executable(lru
 
 
 add_executable(lirs
-    src/main.cpp
+    src/main_lirs.cpp
     include/lirs.hpp
     include/main.hpp
 )
 
-# Устанавливаем include директории
-target_include_directories(lru_demo
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+target_include_directories(lru PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(lirs PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Настройки компилятора
 if(MSVC)
-    target_compile_options(lru_demo PRIVATE /W4 /permissive-)
+    target_compile_options(lru PRIVATE /W4 /permissive-)
+    target_compile_options(lirs PRIVATE /W4 /permissive-)
 else()
-    target_compile_options(lru_demo PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(lru PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(lirs PRIVATE -Wall -Wextra -Wpedantic)
 endif()

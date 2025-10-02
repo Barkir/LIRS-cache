@@ -17,5 +17,5 @@ int main() {
             lirs.insert(key, key * 100);
         }
     }
-
+    std::cout << "wtf" << "\n";
 }
