@@ -11,7 +11,7 @@ const size_t DEFAULT_LIR_CAP = 16;
 const size_t DEFAULT_HIR_CAP = 2;
 const size_t RECENCY_THRESHOLD = 128;
 
-// #define DEBUG_MODE
+#define DEBUG_MODE
 #ifdef DEBUG_MODE
 
 #define ON_DEBUG(code) code
@@ -113,6 +113,7 @@ class LIRSCache {
         }
 
         lstIter onStack(KeyT key) {
+
             for (auto lit = lowInterSet.begin(); lit != lowInterSet.end(); lit++) {
                 if (lit->first == key) {
                     return lit;
@@ -186,19 +187,38 @@ class LIRSCache {
 
 template<typename T, typename KeyT>
 void LIRSCache<T, KeyT>::insert(KeyT key, T elem) {
+    ON_DEBUG(std::cout << "===LIRSCache insert method===\n");
+
     std::pair<KeyT, LIRSPage<T>> toInsert(key, elem); // data to insert
+
+    ON_DEBUG(std::cout << "Inserting data: {" << key << elem << "}\n");
+
     if (lowInterSet.size() <= lir_capacity) { // empty hash case
+
+        ON_DEBUG(std::cout << "# empty hash case\n");
 
         toInsert.second.setHot(true);
         toInsert.second.setResident(true);
 
+        ON_DEBUG(std::cout << "\t set to hot, set to resident\n");
+
         lowInterSet.push_front(toInsert);
+
+        ON_DEBUG(std::cout << "\t pushed it to the front of the stack S\n");
+
         hashMap[key] = lowInterSet.begin();
+
+        ON_DEBUG(std::cout << "\t hashMap[key] = lowInterSet.begin()\n");
     } else if (highInterSet.size() <= hir_capacity) {
+        ON_DEBUG(std::cout << "# pushing to highInterSetCase case\n");
         highInterSet.push_front(toInsert);
+        ON_DEBUG(std::cout << "\t highInterSet.push_front(toInsert)\n");
     } else {
+        ON_DEBUG(std::cout << "# no place in highInterSet case\n");
         highInterSet.pop_back();
         highInterSet.push_front(toInsert);
+        ON_DEBUG(std::cout << "\t popped back of the list Q, highIntetSet.push_front(toInsert)\n");
+
     }
 }
 
@@ -225,51 +245,85 @@ LIRSPage<T>* LIRSCache<T, KeyT>::getWithStats(KeyT key){
 
 template<typename T, typename KeyT>
 LIRSPage<T>* LIRSCache<T, KeyT>::getFunc(KeyT key, bool testState) {
+    ON_DEBUG(std::cout << "===LIRSCache getFunc method (testState =" << testState << ")===\n");
     auto it = hashMap.find(key);
     if (it != hashMap.end()) { // page can be hot or cold resident
+        ON_DEBUG(std::cout << "# hot or cold resident case (found elem in hashmap)\n");
         if (it->second->second.getHot()) { // hot page case
+            ON_DEBUG(std::cout << "\t # hot page case\n");
             if (atTheBottom(it)) { // if at the stack bottom
+                ON_DEBUG(std::cout << "\t\t # at the bottom of the stack case\n");
                 lowInterSet.splice(lowInterSet.begin(), lowInterSet, it->second);
+                ON_DEBUG(std::cout << "\t\t\t moving it to the beginning of lowInterSet\n");
                 prune();
-                if (testState) stats.recordHit();
+                ON_DEBUG(std::cout << "\t\t\t pruning... \n");
+                if (testState)
+                    stats.recordHit();
                 return &it->second->second;
             } else {
+                ON_DEBUG(std::cout << "\t\t # not at the bottom of the stack case\n");
                 lowInterSet.splice(lowInterSet.begin(), lowInterSet, it->second);
-                if (testState) stats.recordHit();
+                ON_DEBUG(std::cout << "\t\t\t moving it to the beginning of lowInterSet\n");
+                if (testState)
+                    stats.recordHit();
                 return &it->second->second;
             }
         } else { // cold resident page case
+            ON_DEBUG(std::cout << "\t # cold resident page case\n");
             if (auto new_it = onStack(key); new_it != highInterSet.end()) {
-                it->second->second.setHot(true);
-                highInterSet.erase(it->second);
+                ON_DEBUG(std::cout << "\t\t # cold resident page on stack case\n");
+                new_it->second.setHot(true);
+                ON_DEBUG(std::cout << "\t\t\t setting it to hot page\n");
+                highInterSet.erase(new_it);
+                ON_DEBUG(std::cout << "\t\t\t erasing from Q\n");
                 lowInterSet.back().second.setHot(false);
+                ON_DEBUG(std::cout << "\t\t\t setting back of lowInterSet to cold\n");
                 lowInterSet.splice(highInterSet.end(), lowInterSet, lowInterSet.end()); // moving from lowInterSet end to highInterSet end
+                ON_DEBUG(std::cout << "\t\t\t moving back of lowInterSet to highInterSet\n");
                 prune();
-                if (testState) stats.recordMiss();
+                ON_DEBUG(std::cout << "\t\t\t pruning...\n");
+                if (testState)
+                    stats.recordMiss();
                 return &new_it->second;
 
             } else {
-                highInterSet.splice(highInterSet.end(), highInterSet, it->second); // leaving it cold and moving to the end of the queue
-                if (testState) stats.recordMiss();
+                ON_DEBUG(std::cout << "\t\t # cold resident page not on stack case\n");
+                highInterSet.splice(highInterSet.end(), highInterSet, new_it); // leaving it cold and moving to the end of the queue
+                ON_DEBUG(std::cout << "\t\t\t moving page to the end of the queue\n");
+;                if (testState)
+                    stats.recordMiss();
                 return &new_it->second;
             }
 
         }
     } else { // page can be cold non-resident
-        if (auto new_it = onStack(key); new_it != lowInterSet.end()) {
-            it->second->second.setHot(true);
+        ON_DEBUG(std::cout << "# cold non-resident page case\n");
+        if (auto new_it = onStack(key); new_it != highInterSet.end()) {
+            ON_DEBUG(std::cout << "\t\t # cold non-resident page on stack case\n");
+            new_it->second.setHot(true);
+            ON_DEBUG(std::cout << "\t\t\t setting it to hot page\n");
+            highInterSet.erase(new_it);
+            ON_DEBUG(std::cout << "\t\t\t erasing from Q\n");
             lowInterSet.back().second.setHot(false);
+            ON_DEBUG(std::cout << "\t\t\t setting back of lowInterSet to cold\n");
             highInterSet.splice(highInterSet.end(), lowInterSet, lowInterSet.end());
+            ON_DEBUG(std::cout << "\t\t\t moving back of lowInterSet to highInterSet\n");
             prune();
-            if (testState) stats.recordMiss();
+            ON_DEBUG(std::cout << "\t\t\t pruning...\n");
+            if (testState)
+                stats.recordMiss();
             return &new_it->second;
         } else {
-            highInterSet.splice(highInterSet.end(), lowInterSet, it->second);
-            if (testState) stats.recordMiss();
-            return &new_it->second;
+            ON_DEBUG(std::cout << "\t\t # cold non-resident page not on stack case\n");
+            if (auto new_it = onQueue(key); new_it != highInterSet.end()) {
+                highInterSet.splice(highInterSet.end(), lowInterSet, new_it);
+                ON_DEBUG(std::cout << "\t\t\t moving page to the end of the queue\n");
+                if (testState)
+                    stats.recordMiss();
+                return &new_it->second;
+            }
         }
     }
-
     return nullptr;
 }
 
