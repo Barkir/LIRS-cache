@@ -72,12 +72,17 @@ T& getWithStats(int key) {
 ```
 
 ### How to test LIRS?
-To write a test - use this format
+To write a test - use this format:
 ```
 {lir_size} {hir_size} {number of calls} {call sequence}
 ```
 
-Then it prints you this info
+Then run program like this:
+```
+./lirs < test.txt
+```
+
+Then it prints you this info:
 1. Total hits
 2. Total misses
 3. Hit Rate
