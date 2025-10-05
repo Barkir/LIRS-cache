@@ -23,7 +23,9 @@ cmake ..
 cmake --build .
 ```
 
-## How to test?
+5. you will get two targets - `lirs` and `lru` (hopefully).
+
+## How to test LRU?
 Write your tests in `tests` directory in this fmt
 
 ```
@@ -46,6 +48,9 @@ and run it
 ```
 
 
+
+---
+
 ## LIRS tests implementation
 
 Testing infrastructure of *LIRS* cache will differ from *LRU*.
@@ -65,6 +70,20 @@ T& getWithStats(int key) {
     return getFunc(key, false)
 }
 ```
+
+### How to test LIRS?
+To write a test - use this format
+```
+{lir_size} {hir_size} {number of calls} {call sequence}
+```
+
+Then it prints you this info
+1. Total hits
+2. Total misses
+3. Hit Rate
+
+That's all 4 today.
+
 
 ## References
 [MySQL LIRS implementation source code](https://www.iskm.org/mysql56/pgman_8hpp_source.html)

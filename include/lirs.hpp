@@ -11,7 +11,7 @@ const size_t DEFAULT_LIR_CAP = 16;
 const size_t DEFAULT_HIR_CAP = 2;
 const size_t RECENCY_THRESHOLD = 128;
 
-#define DEBUG_MODE
+// #define DEBUG_MODE
 #ifdef DEBUG_MODE
 
 #define ON_DEBUG(code) code
@@ -140,7 +140,7 @@ class LIRSCache {
         LIRSPage<T>* get(KeyT key);
         LIRSPage<T>* getWithStats(KeyT key);
 
-        void printCache();
+        void printCacheStats();
         void prune();
 
     public:
@@ -184,6 +184,12 @@ class LIRSCache {
     }
 };
 
+template<typename T, typename KeyT>
+void LIRSCache<T, KeyT>::printCacheStats() {
+    std::cout << "Total hits: " << stats.getHits() << "\n";
+    std::cout << "Total misses: " << stats.getMisses() << "\n";
+    std::cout << "hitRate: " << stats.getHitRate() << "\n";
+}
 
 template<typename T, typename KeyT>
 void LIRSCache<T, KeyT>::insert(KeyT key, T elem) {

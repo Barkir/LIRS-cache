@@ -12,7 +12,7 @@ int main() {
 // =============================================================
 //     Testing infrastructure for LRU cache (./run_tests.sh)
 // =============================================================
-    struct testingInterface testing = getTestingInfo();
+    struct testingInterface testing = getTestingInfo(LRU_MODE);
     std::ostringstream buffer;
     std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
 
