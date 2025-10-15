@@ -2,7 +2,8 @@
 
 enum testingModes {
     LRU_MODE,
-    LIRS_MODE
+    LIRS_MODE,
+    IDEAL_MODE
 };
 
 struct testingInterface {
@@ -35,6 +36,16 @@ struct testingInterface getTestingInfo(enum testingModes mode) {
                         }
 
                         std::cin >> testing.hits;
+                        return testing;
+
+        case IDEAL_MODE:std::cin >> testing.cache_size;
+                        std::cin >> testing.numelements;
+
+                        for (size_t i = 0; i < testing.numelements; i++) {
+                            int element = 0;
+                            std::cin >> element;
+                            testing.sequence.push_back(element);
+                        }
                         return testing;
 
         case LIRS_MODE: std::cin >> testing.lir_size;

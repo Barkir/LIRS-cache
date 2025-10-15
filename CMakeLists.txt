@@ -9,11 +9,19 @@ set(COMMON_HEADERS
     include/lirs.hpp
     include/stats.hpp
     include/main.hpp
+    include/ideal.hpp
 )
 
 add_executable(lru
     src/main.cpp
     include/cache.hpp
+    include/stats.hpp
+    include/main.hpp
+)
+
+add_executable(ideal
+    src/main_ideal.cpp
+    include/ideal.hpp
     include/stats.hpp
     include/main.hpp
 )
@@ -28,12 +36,15 @@ add_executable(lirs
 
 target_include_directories(lru PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_include_directories(lirs PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(ideal PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Настройки компилятора
 if(MSVC)
     target_compile_options(lru PRIVATE /W4 /permissive-)
     target_compile_options(lirs PRIVATE /W4 /permissive-)
+    target_compile_options(ideal PRIVATE /W4 /permissive-)
 else()
     target_compile_options(lru PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(lirs PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(ideal PRIVATE -Wall -Wextra -Wpedantic)
 endif()

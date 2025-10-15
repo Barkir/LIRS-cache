@@ -117,6 +117,8 @@ class LIRSCache {
         LIRSPage<T>* getWithStats(KeyT key);
 
         void printCacheStats();
+        void printCacheHits();
+
         void prune();
 
     public:
@@ -165,6 +167,11 @@ void LIRSCache<T, KeyT>::printCacheStats() {
     std::cout << "Total hits: " << stats.getHits() << "\n";
     std::cout << "Total misses: " << stats.getMisses() << "\n";
     std::cout << "hitRate: " << stats.getHitRate() << "\n";
+}
+
+template<typename T, typename KeyT>
+void LIRSCache<T, KeyT>::printCacheHits() {
+    std::cout << stats.getHits() << "\n";
 }
 
 template<typename T, typename KeyT>

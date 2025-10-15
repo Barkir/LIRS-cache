@@ -16,5 +16,5 @@ int main() {
             lirs.insert(key, key * 100);
         }
     }
-    lirs.printCacheStats();
+    lirs.printCacheHits();
 }
