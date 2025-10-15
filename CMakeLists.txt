@@ -7,12 +7,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(COMMON_HEADERS
     inlcude/cache.hpp
     include/lirs.hpp
+    include/stats.hpp
     include/main.hpp
 )
 
 add_executable(lru
     src/main.cpp
     include/cache.hpp
+    include/stats.hpp
     include/main.hpp
 )
 
@@ -20,6 +22,7 @@ add_executable(lru
 add_executable(lirs
     src/main_lirs.cpp
     include/lirs.hpp
+    include/stats.hpp
     include/main.hpp
 )
 

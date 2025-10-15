@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <iomanip>
 
+#include "stats.hpp"
+
 const size_t DEFAULT_LIR_CAP = 16;
 const size_t DEFAULT_HIR_CAP = 2;
 const size_t RECENCY_THRESHOLD = 128;
@@ -21,38 +23,6 @@ const size_t RECENCY_THRESHOLD = 128;
 #define ON_DEBUG(code)
 
 #endif
-
-
-class CacheStats {
-    private:
-        size_t hits = 0;
-        size_t misses = 0;
-
-    // record functions
-    public:
-        void recordHit() {
-            hits++;
-        }
-        void recordMiss() {
-            misses++;
-        }
-
-    // get functions
-    public:
-        size_t getHits() {
-            return hits;
-        }
-
-        size_t getMisses() {
-            return misses;
-        }
-
-    // analyzing
-    public:
-        double getHitRate() const {
-        return (hits + misses) > 0 ? static_cast<double>(hits) / (hits + misses) : 0.0;
-    }
-};
 
 template <typename T>
 class LIRSPage {
@@ -96,11 +66,17 @@ class LIRSPage {
 template <typename T, typename KeyT = int>
 class LIRSCache {
     private:
-        using lstIter = typename std::list<std::pair<KeyT, LIRSPage<T>>>::iterator;
-        std::list<std::pair<KeyT, LIRSPage<T>>> lowInterSet;
-        std::list<std::pair<KeyT, LIRSPage<T>>> highInterSet;
-        std::list<std::pair<KeyT, LIRSPage<T>>> dataList;
+
+        using lst = typename std::list<std::pair<KeyT, LIRSPage<T>>>;
+        using lstIter = lst::iterator;
+
+// -----------------------------
+        lst lowInterSet;
+        lst highInterSet;
+        lst dataList;
         std::unordered_map<KeyT, lstIter> hashMap;
+// -----------------------------
+
         size_t lir_capacity;
         size_t hir_capacity;
 
