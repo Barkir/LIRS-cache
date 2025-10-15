@@ -40,9 +40,9 @@ target_include_directories(ideal PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Настройки компилятора
 if(MSVC)
-    target_compile_options(lru PRIVATE /W4 /permissive-)
-    target_compile_options(lirs PRIVATE /W4 /permissive-)
-    target_compile_options(ideal PRIVATE /W4 /permissive-)
+    target_compile_options(lru PRIVATE /W4 /permissive- -O2)
+    target_compile_options(lirs PRIVATE /W4 /permissive- -O2)
+    target_compile_options(ideal PRIVATE /W4 /permissive- -O2)
 else()
     target_compile_options(lru PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(lirs PRIVATE -Wall -Wextra -Wpedantic)
