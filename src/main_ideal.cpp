@@ -13,6 +13,7 @@ int main() {
 
     IdealCache<int, int> ideal(testing.cache_size, slow_get_elem, testing.sequence);
     for (auto key : testing.sequence) {
+        // ideal.printCacheInfo();
         ideal.lookup_update(key);
     }
     ideal.printCacheHits();

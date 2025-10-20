@@ -6,7 +6,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-if [ ! -f "./build/lru_demo" ]; then
+if [ ! -f "./build/lru" ]; then
     echo -e "${RED}Ошибка: программа lru_demo не найдена${NC}"
     echo "Скомпилируйте программу"
     exit 1
@@ -48,7 +48,7 @@ run_test() {
     echo -e "\n${BLUE}--- Запуск теста: $test_name ---${NC}"
 
     # Запускаем тест и сохраняем вывод
-    ./build/lru_demo < "$test_file" > "test_results/${test_name}.log" 2>&1
+    ./build/lru < "$test_file" > "test_results/${test_name}.log" 2>&1
 
     # Проверяем код возврата
     local exit_code=$?
