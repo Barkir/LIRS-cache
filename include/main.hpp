@@ -25,7 +25,7 @@ struct testingInterface getTestingInfo(enum testingModes mode) {
 
     struct testingInterface testing = {};
     switch (mode) {
-        case LRU_MODE:  std::cin >> testing.test_name;
+        case LRU_MODE:  //std::cin >> testing.test_name;
                         std::cin >> testing.cache_size;
                         std::cin >> testing.numelements;
 
@@ -35,7 +35,7 @@ struct testingInterface getTestingInfo(enum testingModes mode) {
                             testing.sequence.push_back(element);
                         }
 
-                        std::cin >> testing.hits;
+                        // std::cin >> testing.hits;
                         return testing;
 
         case IDEAL_MODE:std::cin >> testing.cache_size;

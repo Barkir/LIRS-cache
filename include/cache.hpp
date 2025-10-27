@@ -61,6 +61,7 @@ void WhateverCache<T, KeyT>::insert(KeyT key, T elem) {
 
         it->second->second = elem;
         dataList.splice(dataList.begin(), dataList, it->second);
+        hashMap[key] = dataList.begin();
         return;
     }
     if (hashMap.size() >= capacity) {
@@ -72,15 +73,13 @@ void WhateverCache<T, KeyT>::insert(KeyT key, T elem) {
         ON_DEBUG(if (hashMap.find(lastKey) != hashMap.end()))
             ON_DEBUG(std::cout << "element is really in a hashmap!" << "\n");
         hashMap.erase(lastKey);
+        dataList.pop_back();
 
         ON_DEBUG(std::cout << "pushing new pair to the list..." << "\n");
         dataList.push_front(std::make_pair(key, elem));
 
         ON_DEBUG(std::cout << "moving it to the hashmap..." << "\n");
         hashMap[key] = dataList.begin();
-
-        // move the last recently used element to the beginning
-        dataList.splice(dataList.begin(), dataList, lastIt);
     } else {
         ON_DEBUG(std::cout << "case hashMap is not full yet : inserting element..." << "\n");
         dataList.push_front(std::make_pair(key, elem));
@@ -111,17 +110,10 @@ template<typename T, typename KeyT>
 T* WhateverCache<T, KeyT>::slow_get_page(KeyT key) {
     for (auto it = dataList.begin(); it != dataList.end(); it++) {
         if (it->first == key) {
-            ON_DEBUG(std::cout << "found page in list!" << "\n");
-
-            auto lastIt = std::prev(dataList.end());
-            auto lastKey = lastIt->first;
-
-            // replacing LRU element in cache
-            hashMap.erase(lastKey);
-
-
-            // moving LRU element to the start of the list
-            dataList.splice(dataList.begin(), dataList, lastIt);
+            // Перемещаем найденный элемент в начало
+            dataList.splice(dataList.begin(), dataList, it);
+            // Обновляем хэш-таблицу
+            hashMap[key] = dataList.begin();
             return &(dataList.front().second);
         }
     }
