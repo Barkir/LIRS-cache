@@ -1,8 +1,9 @@
-        #pragma once
+#pragma once
 
 #include <unordered_map>
 #include <list>
 #include <queue>
+#include "stats.hpp"
 
 // #define DEBUG_MODE
 #ifdef DEBUG_MODE
@@ -24,6 +25,7 @@ class WhateverCache {
         std::unordered_map<KeyT, lstIter> hashMap;
         std::list<std::pair<KeyT, T>> dataList;
         size_t capacity;
+        CacheStats stats;
 
     public:
         WhateverCache(size_t cap = DEFAULT_CACHE_CAP);
@@ -31,6 +33,9 @@ class WhateverCache {
         void insert(KeyT key, T elem);
         T* get(KeyT key);
         T* slow_get_page(KeyT key);
+        size_t getHits() {
+            return stats.getHits();
+        }
 };
 
 
@@ -92,7 +97,8 @@ template<typename T, typename KeyT>
 T* WhateverCache<T, KeyT>::get(KeyT key) {
     auto found = hashMap.find(key);
     if (found != hashMap.end()) {
-        std::cout << "hit!" << "\n";
+        stats.recordHit();
+        // std::cout << "hit!" << "\n";
 
         // moving the element to the start of the dataList
         dataList.splice(dataList.begin(), dataList, found->second);
