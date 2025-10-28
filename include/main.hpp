@@ -48,8 +48,7 @@ struct testingInterface getTestingInfo(enum testingModes mode) {
                         }
                         return testing;
 
-        case LIRS_MODE: std::cin >> testing.lir_size;
-                        std::cin >> testing.hir_size;
+        case LIRS_MODE: std::cin >> testing.cache_size;
                         std::cin >> testing.numelements;
 
                         for (size_t i = 0; i < testing.numelements; i++) {

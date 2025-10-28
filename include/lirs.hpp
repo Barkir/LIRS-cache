@@ -35,6 +35,7 @@ class LIRSPage {
 
     // constructors
     public:
+        std::list<T>::iterator stackIt;
         LIRSPage(const T& initialData) : data(initialData), recency(std::nullopt), irr(std::nullopt),
             isHot(false), isResident(false) {}
 
@@ -89,21 +90,26 @@ class LIRSCache {
         }
 
         lstIter onStack(KeyT key) {
-
-            for (auto lit = lowInterSet.begin(); lit != lowInterSet.end(); lit++) {
-                if (lit->first == key) {
-                    return lit;
-                }
-            }
-            return highInterSet.end();
+            auto result = hashMap.find(key);
+            if (result != hashMap.end())
+                return result->second;
+            // for (auto lit = lowInterSet.begin(); lit != lowInterSet.end(); lit++) {
+            //     if (lit->first == key) {
+            //         return lit;
+            //     }
+            // }
+            return lowInterSet.end();
         }
 
         lstIter onQueue(KeyT key) {
-            for (auto hit = highInterSet.begin(); hit != highInterSet.end(); hit++) {
-                if (hit->first == key) {
-                    return hit;
-                }
-            }
+            auto result = hashMap.find(key);
+            if (result != hashMap.end())
+                return result->second;
+            // for (auto hit = highInterSet.begin(); hit != highInterSet.end(); hit++) {
+            //     if (hit->first == key) {
+            //         return hit;
+            //     }
+            // }
             return highInterSet.end();
         }
 
@@ -119,6 +125,7 @@ class LIRSCache {
         void printCacheStats();
         void printCacheHits();
 
+        void evictIfNeeded(size_t count);
         void prune();
 
     public:
@@ -259,7 +266,7 @@ LIRSPage<T>* LIRSCache<T, KeyT>::getFunc(KeyT key, bool testState) {
             }
         } else { // cold resident page case
             ON_DEBUG(std::cout << "\t # cold resident page case\n");
-            if (auto new_it = onStack(key); new_it != highInterSet.end()) {
+            if (auto new_it = onStack(key); new_it != lowInterSet.end()) {
                 ON_DEBUG(std::cout << "\t\t # cold resident page on stack case\n");
                 new_it->second.setHot(true);
                 ON_DEBUG(std::cout << "\t\t\t setting it to hot page\n");
@@ -287,7 +294,7 @@ LIRSPage<T>* LIRSCache<T, KeyT>::getFunc(KeyT key, bool testState) {
         }
     } else { // page can be cold non-resident
         ON_DEBUG(std::cout << "# cold non-resident page case\n");
-        if (auto new_it = onStack(key); new_it != highInterSet.end()) {
+        if (auto new_it = onStack(key); new_it != lowInterSet.end()) {
             ON_DEBUG(std::cout << "\t\t # cold non-resident page on stack case\n");
             new_it->second.setHot(true);
             ON_DEBUG(std::cout << "\t\t\t setting it to hot page\n");
