@@ -286,7 +286,7 @@ LIRSPage<T>* LIRSCache<T, KeyT>::getFunc(KeyT key, bool testState) {
                 ON_DEBUG(std::cout << "\t\t # cold resident page not on stack case\n");
                 highInterSet.splice(highInterSet.end(), highInterSet, new_it); // leaving it cold and moving to the end of the queue
                 ON_DEBUG(std::cout << "\t\t\t moving page to the end of the queue\n");
-;                if (testState)
+                if (testState)
                     stats.recordMiss();
                 return &new_it->second;
             }
@@ -330,7 +330,9 @@ template<typename T, typename KeyT>
 void LIRSCache<T, KeyT>::prune() {
     for (auto it = lowInterSet.end(); it != lowInterSet.begin(); it--) {
         if (auto smth = onQueue(it->first); smth != highInterSet.end()) {
-            lowInterSet.erase(it);
+            if (it != lowInterSet.end())
+                lowInterSet.erase(it);
+            break;
         } else {
             break;
         }
