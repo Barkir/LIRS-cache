@@ -36,6 +36,22 @@ cmake --build .
 
 5. you will get two targets - `lirs` and `lru` (hopefully).
 
+
+### Testing UPD
+Now for testing you can use `run_tests.py`
+
+you can choose `LRU`, `LIRS`, `IDEAL` testing.
+
+you'll need those libraries.
+
+```python3
+pip3 install questionary
+pip3 install pathlib
+```
+
+
+-----
+
 ## How to test LRU?
 Write your tests in `tests` directory in this fmt
 
