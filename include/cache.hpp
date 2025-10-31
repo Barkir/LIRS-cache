@@ -5,7 +5,7 @@
 #include <queue>
 #include "stats.hpp"
 
-#define DEBUG_MODE
+// #define DEBUG_MODE
 #ifdef DEBUG_MODE
 
 #define ON_DEBUG(code) code
