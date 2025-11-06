@@ -35,7 +35,7 @@ class LIRSPage {
 
     // constructors
     public:
-        std::list<T>::iterator stackIt;
+        typename std::list<T>::iterator stackIt;
         LIRSPage(const T& initialData) : data(initialData), recency(std::nullopt), irr(std::nullopt),
             isHot(false), isResident(false) {}
 
