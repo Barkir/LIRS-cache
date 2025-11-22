@@ -6,6 +6,7 @@
 #include <optional>
 #include <unordered_map>
 #include <iomanip>
+#include <functional>
 
 #include "stats.hpp"
 
@@ -68,6 +69,7 @@ template <typename T, typename KeyT = int>
 class LIRSCache {
     private:
 
+        using slowGetFunc = std::function<T(const KeyT &)>;
         using lst = typename std::list<std::pair<KeyT, LIRSPage<T>>>;
         using lstIter = lst::iterator;
 
@@ -80,6 +82,7 @@ class LIRSCache {
 
         size_t lir_capacity;
         size_t hir_capacity;
+        slowGetFunc slowFunc;
 
         CacheStats stats;
 
@@ -114,7 +117,7 @@ class LIRSCache {
         }
 
     public:
-        LIRSCache(size_t lirCap = DEFAULT_LIR_CAP, size_t hirCap = DEFAULT_HIR_CAP) : lir_capacity(lirCap), hir_capacity(hirCap) {};
+        LIRSCache(size_t lirCap = DEFAULT_LIR_CAP, size_t hirCap = DEFAULT_HIR_CAP, slowGetFunc slowFuncIn = nullptr) : lir_capacity(lirCap), hir_capacity(hirCap), slowFunc(slowFuncIn) {};
         void insert(KeyT key, T elem);
 
         LIRSPage<T>* getFunc(KeyT key, bool state);
